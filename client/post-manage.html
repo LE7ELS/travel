@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>景点管理</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+        <!-- Additional CSS Files -->
+        <link rel="stylesheet" href="assets/css/fontawesome.css" />
+        <link rel="stylesheet" href="assets/css/templatemo-style.css" />
+        <link rel="stylesheet" href="assets/css/owl.css" />
+    </head>
+    <body>
+        <!-- Wrapper -->
+        <div id="wrapper">
+            <!-- Main -->
+            <div id="main">
+                <div class="inner">
+                    <!-- Header -->
+                    <header id="header">
+                        <div class="logo">
+                            <a href="login.html">游客，请登录</a>
+                        </div>
+                    </header>
+
+                    <!-- Page Heading -->
+                    <div class="page-heading">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h1>管理我发布的景点</h1>
+                                    <p>
+                                        在这里对你发布的景点进行管理！
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 景点管理 -->
+                    <div id="spotsList"></div>
+
+                    <!-- 修改弹窗 -->
+                    <div
+                        class="modal fade"
+                        id="editModal"
+                        tabindex="-1"
+                        role="dialog"
+                    >
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalTitle">
+                                        修改景点信息
+                                    </h5>
+                                    <button
+                                        type="button"
+                                        class="close"
+                                        data-dismiss="modal"
+                                    >
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form
+                                    id="editForm"
+                                    class="modal-body"
+                                    method="post"
+                                    enctype="multipart/form-data"
+                                >
+                                    <div class="form-group">
+                                        <label for="price">票价</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"
+                                                    >￥</span
+                                                >
+                                            </div>
+                                            <input
+                                                type="text"
+                                                onkeyup="value=value.replace(/^(-1+)|[^\d]+/g,'')"
+                                                class="form-control"
+                                                name="ticket"
+                                                id="ticket"
+                                                placeholder="票价"
+                                                required
+                                            />
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"
+                                                    >.00</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="spotDesc">景点描述</label>
+                                        <textarea
+                                            name="spotDesc"
+                                            id="spotDesc"
+                                            class="form-control"
+                                            cols="30"
+                                            rows="5"
+                                            required
+                                        ></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="album">更新景点图片</label>
+                                        <div class="custom-file">
+                                            <input
+                                                type="file"
+                                                class="custom-file-input"
+                                                name="album"
+                                                id="album"
+                                            />
+                                            <label
+                                                class="custom-file-label"
+                                                for="album"
+                                                >点击选择图片</label
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-5">
+                                        <label for="preview">图片预览</label>
+                                        <div id="preview"></div>
+                                    </div>
+                                </form>
+                                <div class="modal-footer">
+                                    <span id="editTips"></span>
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary"
+                                        data-dismiss="modal"
+                                    >
+                                        取消
+                                    </button>
+                                    <a
+                                        href="#"
+                                        class="btn btn-primary"
+                                        onclick="editSubmit()"
+                                    >
+                                        确认修改
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 删除弹窗 -->
+                    <div
+                        class="modal fade"
+                        id="delModal"
+                        tabindex="-1"
+                        role="dialog"
+                    >
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="delTitle">
+                                        删除景点
+                                    </h5>
+                                    <button
+                                        type="button"
+                                        class="close"
+                                        data-dismiss="modal"
+                                    >
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    您确定要删除吗？
+                                </div>
+                                <div class="modal-footer">
+                                    <span id="delTips"></span>
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary"
+                                        data-dismiss="modal"
+                                    >
+                                        取消
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                        onclick="delSubmit()"
+                                    >
+                                        确认删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- sidebar -->
+            <div id="sidebar">
+                <div class="inner">
+                    <!-- Search Box -->
+                    <section id="search" class="alt">
+                        <form onsubmit="return false" id="keyWordForm">
+                            <input
+                                type="text"
+                                id="keyword"
+                                placeholder="搜索景点..."
+                            />
+                        </form>
+                    </section>
+
+                    <!-- Menu -->
+                    <nav id="menu">
+                        <ul>
+                            <li><a href="index.html">最新景点</a></li>
+                            <li><a href="post-add.html">发布新景点</a></li>
+                            <li><a href="post-manage.html">景点管理</a></li>
+                        </ul>
+                    </nav>
+
+                    <!-- Featured Posts -->
+                    <div class="featured-posts">
+                        <div class="heading">
+                            <h2>免费景点推荐</h2>
+                        </div>
+                        <div id="selected" class="owl-carousel owl-theme"></div>
+                    </div>
+
+                    <!-- Footer -->
+                    <footer id="footer">
+                        <p class="copyright">
+                            UML课设@1600300626王杰城
+                        </p>
+                    </footer>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <!-- Bootstrap core JavaScript -->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/transition.js"></script>
+        <script src="assets/js/owl-carousel.js"></script>
+        <script src="assets/js/custom.js"></script>
+
+        <script src="./assets/js/base.js"></script>
+        <!-- 使用jQuery-form.js插件 -->
+        <script src="./assets/js/jquery-form.js"></script>
+        <script>
+            // 全局定义的id
+            var editId, delId
+
+            $(function() {
+                // 获取免费的推荐景点
+                getSelectedSpots()
+
+                // 游客身份提示
+                if (!landed().isLanded) {
+                    $('#header').after(`
+                    <div
+                        class="alert alert-warning alert-dismissible fade show"
+                        role="alert"
+                        style="margin-bottom: 100px"
+                    >
+                        您现在处于游客状态访问网站，仅能进行查看和搜索，管理景点请先登录！！
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    `)
+                    return
+                } else {
+                    // 获取当前登录用户发布的景点
+                    getMySpots(landed().landedUser)
+                }
+
+                // 点击登出
+                $('.logo a').click(function() {
+                    localStorage.clear('myToken')
+                    location.href = 'login.html'
+                })
+            })
+
+            // 提交删除
+            function delSubmit() {
+                $.ajax({
+                    async: false,
+                    url: rootPath + '/spots/delSpot',
+                    method: 'POST',
+                    data: {
+                        id: delId
+                    },
+                    success: function(result) {
+                        console.log(result)
+                        if (result.code == 200) {
+                            $('#delTips')
+                                .text('删除成功，请刷新页面')
+                                .css('color', 'red')
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            }
+
+            // 删除景点
+            function delSpot(spotId) {
+                $.ajax({
+                    async: false,
+                    url: rootPath + `/spots/getSpot?id=${spotId}`,
+                    method: 'GET',
+                    success: function(result) {
+                        console.log(result)
+                        $(result.data).each(function(index, obj) {
+                            $('#delTitle').text(
+                                '删除景点 ' + obj.name + ' 的信息'
+                            )
+                        })
+                        // 把当前编辑的景点的id父子给全局变量
+                        delId = spotId
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            }
+
+            // 提交修改
+            function editSubmit() {
+                $('#editForm').ajaxSubmit({
+                    async: false,
+                    url: rootPath + '/spots/editSpot',
+                    method: 'POST',
+                    data: {
+                        id: editId
+                    },
+                    success: function(result) {
+                        console.log(result)
+
+                        if (result.code == 200) {
+                            $('#editTips')
+                                .text('修改成功，请刷新页面')
+                                .css('color', 'red')
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            }
+
+            // 编辑景点按钮事件
+            function editSpot(spotId) {
+                $.ajax({
+                    async: false,
+                    url: rootPath + `/spots/getSpot?id=${spotId}`,
+                    method: 'GET',
+                    success: function(result) {
+                        console.log(result)
+                        $(result.data).each(function(index, obj) {
+                            $('#modalTitle').text(
+                                '修改 ' + obj.name + ' 的信息'
+                            )
+                            $('#ticket').val(obj.ticket)
+                            $('#spotDesc').val(obj.describe)
+                        })
+                        // 把当前编辑的景点的id父子给全局变量
+                        editId = spotId
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            }
+
+            // 获取个人发布的景点
+            function getMySpots(user) {
+                $.ajax({
+                    async: false,
+                    url: rootPath + `/spots/getMySpots?publisher=${user}`,
+                    method: 'GET',
+                    success: function(result) {
+                        console.log(result)
+                        var content = ''
+
+                        // 清空原有数据
+                        $('#spotsList').empty()
+
+                        if (result.data.length == 0) {
+                            console.log(result.msg)
+                            return
+                        }
+
+                        // 数据对象遍历
+                        $(result.data).each(function(index, obj) {
+                            let ticket = obj.ticket,
+                                seasons,
+                                album = staticFile + obj.album
+
+                            if (obj.ticket == 0) {
+                                ticket = '免费'
+                            }
+                            switch (obj.seasons) {
+                                case 1:
+                                    seasons = '春季'
+                                    break
+
+                                case 2:
+                                    seasons = '夏季'
+                                    break
+
+                                case 3:
+                                    seasons = '秋季'
+                                    break
+
+                                case 4:
+                                    seasons = '冬季'
+                                    break
+
+                                case 5:
+                                    seasons = '春秋'
+                                    break
+
+                                case 6:
+                                    seasons = '四季皆宜'
+                                    break
+
+                                default:
+                                    break
+                            }
+
+                            // dom渲染
+                            content = `
+                                <section class="right-image">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="left-content">
+                                                    <h4>${obj.name}</h4>
+                                                    <p>
+                                                        🚩地址：${obj.position}
+                                                    </p>
+                                                    <p>
+                                                        💴票价(元)：${ticket}
+                                                    </p>
+                                                    <p>
+                                                        🌤最佳游玩季节：${seasons}
+                                                    </p>
+                                                    <p>
+                                                        🏝景点简介：${
+                                                            obj.describe
+                                                        }
+                                                    </p>
+                                                    <p>
+                                                        tips：本景点由
+                                                        <a href="#">${
+                                                            obj.publisher
+                                                        }</a>
+                                                        于
+                                                        <a href="#">${
+                                                            obj.createdAt
+                                                        }</a>
+                                                        提交发现。<br />
+                                                        上次修改时间：${
+                                                            obj.updatedAt
+                                                        }
+                                                    </p>
+                                                    <div class="btn-group">
+                                                        <div
+                                                            class="primary-button"
+                                                            style="margin-right: 30px"
+                                                        >
+                                                            <button
+                                                                class="btn btn-primary"
+                                                                data-toggle="modal"
+                                                                data-target="#editModal"
+                                                                onclick="editSpot(${
+                                                                    obj.id
+                                                                })"
+                                                            >
+                                                                编辑景点
+                                                            </button>
+                                                        </div>
+                                                        <div class="danger-button">
+                                                            <button
+                                                                class="btn btn-danger"
+                                                                data-toggle="modal"
+                                                                data-target="#delModal"
+                                                                onclick="delSpot(${
+                                                                    obj.id
+                                                                })"
+                                                            >
+                                                                删除景点
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <img src="${album}" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>`
+                            // 拼接
+                            $('#spotsList').append(content)
+                        })
+                    },
+                    error: function() {
+                        console.log(error)
+                    }
+                })
+            }
+
+            // 获取免费的推荐景点
+            function getSelectedSpots() {
+                $.ajax({
+                    async: false,
+                    url: rootPath + '/spots/getFreeSpots',
+                    method: 'GET',
+                    success: function(result) {
+                        console.log('获取的免费推荐景点', result)
+                        var selected = ''
+
+                        // 清空原有数据
+                        $('#selected').empty()
+
+                        if (result.data.length == 0) {
+                            console.log(result.msg)
+                            return
+                        }
+                        // 数据对象遍历
+                        $(result.data).each(function(index, obj) {
+                            let album = staticFile + obj.album
+
+                            selected = `
+                                <div class="featured-item">
+                                    <img
+                                        src="${album}"
+                                        alt="${obj.album}"
+                                    />
+                                    <p>
+                                        ${obj.name}
+                                    </p>
+                                </div>`
+                            // DOM生成
+                            $('#selected').append(selected)
+                        })
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            }
+
+            // 判断当前是否已登陆
+            function landed() {
+                var my_token = localStorage.myToken
+                var landedStatus = {
+                    isLanded: false,
+                    landedUser: '未登录'
+                }
+                // 页面加载完成时请求
+                $.ajax({
+                    async: false,
+                    url: rootPath + '/users/current',
+                    method: 'GET',
+                    headers: {
+                        Authorization: my_token
+                    },
+                    success: function(result) {
+                        console.log('成功的回调：' + result.msg)
+                        if (result.code == 200) {
+                            // DOM渲染
+                            $('.logo a').text(
+                                result.data.username + '，点击登出'
+                            )
+                            landedStatus.isLanded = true
+                            landedStatus.landedUser = result.data.username
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error.statusText)
+                    }
+                })
+
+                return landedStatus
+            }
+
+            // 图片上传预览
+            $('#album').on('change', function() {
+                if (typeof FileReader != 'undefined') {
+                    var preview = $('#preview')
+                    preview.empty()
+                    var reader = new FileReader()
+                    reader.onload = function(e) {
+                        $('<img />', {
+                            src: e.target.result,
+                            class: 'thumb-image'
+                        }).appendTo(preview)
+                    }
+                    preview.show()
+                    reader.readAsDataURL($(this)[0].files[0])
+                } else {
+                    alert('浏览器不支持FileReader，请使用支持的浏览器上传')
+                }
+            })
+        </script>
+    </body>
+</html>

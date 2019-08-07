@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+
+        <title>旅游图文数据库</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+        <!-- Additional CSS Files -->
+        <link rel="stylesheet" href="assets/css/fontawesome.css" />
+        <link rel="stylesheet" href="assets/css/templatemo-style.css" />
+        <link rel="stylesheet" href="assets/css/owl.css" />
+    </head>
+
+    <body class="is-preload">
+        <!-- Wrapper -->
+        <div id="wrapper">
+            <!-- Main -->
+            <div id="main">
+                <div class="inner">
+                    <!-- Header -->
+                    <header id="header">
+                        <div class="logo">
+                            <a href="login.html">游客，请登录</a>
+                        </div>
+                    </header>
+
+                    <!-- Page Heading -->
+                    <div class="page-heading">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h1>最新景点</h1>
+                                    <p>
+                                        以下是驴友发现的最新景点。👣👣👣
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 图文内容 -->
+                    <div id="spotsList"></div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <div class="inner">
+                    <!-- Search Box -->
+                    <section id="search" class="alt">
+                        <form onsubmit="return false" id="keyWordForm">
+                            <input
+                                type="text"
+                                id="keyword"
+                                placeholder="搜索景点..."
+                            />
+                        </form>
+                    </section>
+
+                    <!-- Menu -->
+                    <nav id="menu">
+                        <ul>
+                            <li><a href="index.html">最新景点</a></li>
+                            <li><a href="post-add.html">发布新景点</a></li>
+                            <li><a href="post-manage.html">景点管理</a></li>
+                        </ul>
+                    </nav>
+
+                    <!-- 免费景点推荐 -->
+                    <div class="featured-posts">
+                        <div class="heading">
+                            <h2>免费景点推荐</h2>
+                        </div>
+                        <div id="selected" class="owl-carousel owl-theme"></div>
+                    </div>
+
+                    <!-- Footer -->
+                    <footer id="footer">
+                        <p class="copyright">
+                            UML课设@1600300626王杰城
+                        </p>
+                    </footer>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <!-- Bootstrap core JavaScript -->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/transition.js"></script>
+        <script src="assets/js/owl-carousel.js"></script>
+        <script src="assets/js/custom.js"></script>
+
+        <script src="./assets/js/base.js"></script>
+        <script>
+            $(function() {
+                // 搜索关键词
+                var searchKeyword = ''
+
+                // 游客身份提示
+                if (!isLanded()) {
+                    $('#header').after(`
+                    <div
+                        class="alert alert-warning alert-dismissible fade show"
+                        role="alert"
+                        style="margin-bottom: 100px"
+                    >
+                        您现在处于游客状态访问网站，仅能进行查看和搜索，如需使用更多功能请登录！
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    `)
+                }
+
+                // 获取最新景点
+                getLastestSpots(searchKeyword)
+                // 获取免费的推荐景点
+                getSelectedSpots()
+
+                // 点击登出
+                $('.logo a').click(function() {
+                    localStorage.clear('myToken')
+                    location.href = 'login.html'
+                })
+
+                // 动态搜索
+                $('#keyword').keyup(function(event) {
+                    if (event.keyCode == 13) {
+                        searchKeyword = $('#keyword').val()
+
+                        // 栏目标题更新
+                        if (searchKeyword == '') {
+                            $('.page-heading h1').text('最新景点')
+                            $('.page-heading p').text(
+                                `以下是驴友发现的最新景点。👣👣👣`
+                            )
+                        } else {
+                            $('.page-heading h1').text('景点搜索')
+                            $('.page-heading p').text(
+                                `以下是名称含有“${searchKeyword}”的景点。🔎🔎🔎`
+                            )
+                        }
+                        // 获取数据
+                        getLastestSpots(searchKeyword)
+                    }
+                })
+            })
+
+            // 获取最新景点
+            function getLastestSpots(value) {
+                $.ajax({
+                    async: false,
+                    url: rootPath + `/spots/getLastest?name=${value}`,
+                    method: 'GET',
+                    success: function(result) {
+                        console.log('获取的最新景点', result)
+                        var content = ''
+
+                        // 清空原有数据
+                        $('#spotsList').empty()
+
+                        if (result.data.length == 0) {
+                            console.log(result.msg)
+                            return
+                        }
+                        // 数据对象遍历
+                        $(result.data).each(function(index, obj) {
+                            let ticket = obj.ticket,
+                                seasons,
+                                album = staticFile + obj.album
+
+                            if (obj.ticket == 0) {
+                                ticket = '免费'
+                            }
+                            switch (obj.seasons) {
+                                case 1:
+                                    seasons = '春季'
+                                    break
+
+                                case 2:
+                                    seasons = '夏季'
+                                    break
+
+                                case 3:
+                                    seasons = '秋季'
+                                    break
+
+                                case 4:
+                                    seasons = '冬季'
+                                    break
+
+                                case 5:
+                                    seasons = '春秋'
+                                    break
+
+                                case 6:
+                                    seasons = '四季皆宜'
+                                    break
+
+                                default:
+                                    break
+                            }
+
+                            // dom渲染
+                            content = `
+                                <section class="left-image">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <img
+                                                    src="${album}"
+                                                />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="right-content">
+                                                    <h4>${obj.name}</h4>
+                                                    <p>
+                                                        🚩地址：${obj.position}
+                                                    </p>
+                                                    <p>
+                                                        💴票价(元)：${ticket}
+                                                    </p>
+                                                    <p>
+                                                        🌤最佳游玩季节：${seasons}
+                                                    </p>
+                                                    <p>
+                                                        🏝景点简介：${
+                                                            obj.describe
+                                                        }
+                                                    </p>
+                                                    <p>
+                                                        tips：本景点由
+                                                        <a href="#">${
+                                                            obj.publisher
+                                                        }</a> 于
+                                                        <a href="#">${
+                                                            obj.createdAt
+                                                        }</a>
+                                                        提交发现。<br>
+                                                        上次修改时间：${
+                                                            obj.updatedAt
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>`
+                            // 拼接
+                            $('#spotsList').append(content)
+                        })
+                    },
+                    error: function(error) {
+                        console.log('错误：', error)
+                    }
+                })
+            }
+
+            // 获取免费的推荐景点
+            function getSelectedSpots() {
+                $.ajax({
+                    async: false,
+                    url: rootPath + '/spots/getFreeSpots',
+                    method: 'GET',
+                    success: function(result) {
+                        console.log('获取的免费推荐景点', result)
+                        var selected = ''
+
+                        // 清空原有数据
+                        $('#selected').empty()
+
+                        if (result.data.length == 0) {
+                            console.log(result.msg)
+                            return
+                        }
+                        // 数据对象遍历
+                        $(result.data).each(function(index, obj) {
+                            let album = staticFile + obj.album
+
+                            selected = `
+                                <div class="featured-item">
+                                    <img
+                                        src="${album}"
+                                        alt="${obj.album}"
+                                    />
+                                    <p>
+                                        ${obj.name}
+                                    </p>
+                                </div>`
+                            // DOM生成
+                            $('#selected').append(selected)
+                        })
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            }
+
+            // 判断当前是否已登陆
+            function isLanded() {
+                var my_token = localStorage.myToken
+                console.log('获取的token：', my_token)
+                var isLanded = false
+                // 页面加载完成时请求
+                $.ajax({
+                    async: false,
+                    url: rootPath + '/users/current',
+                    method: 'GET',
+                    headers: {
+                        Authorization: my_token
+                    },
+                    success: function(result) {
+                        console.log('成功的回调：' + result.msg)
+                        if (result.code == 200) {
+                            // DOM渲染
+                            $('.logo a').text(
+                                result.data.username + '，点击登出'
+                            )
+                            isLanded = true
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error.statusText)
+                    }
+                })
+                return isLanded
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>发布新景点</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+        <!-- Additional CSS Files -->
+        <link rel="stylesheet" href="assets/css/fontawesome.css" />
+        <link rel="stylesheet" href="assets/css/templatemo-style.css" />
+        <link rel="stylesheet" href="assets/css/owl.css" />
+    </head>
+    <body>
+        <!-- Wrapper -->
+        <div id="wrapper">
+            <!-- Main -->
+            <div id="main">
+                <div class="inner">
+                    <!-- Header -->
+                    <header id="header">
+                        <div class="logo">
+                            <a href="login.html">游客，请登录</a>
+                        </div>
+                    </header>
+
+                    <!-- Page Heading -->
+                    <div class="page-heading">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h1>发布新景点</h1>
+                                    <p>
+                                        在这里发布你新发现的宝藏景点吧！
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 景点发布表单 -->
+                    <section class="forms">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form
+                                        id="newSpotForm"
+                                        method="post"
+                                        enctype="multipart/form-data"
+                                    >
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="spotName"
+                                                    >🏕景点名</label
+                                                >
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    name="spotName"
+                                                    id="spotName"
+                                                    placeholder="景点名"
+                                                    required
+                                                />
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="publisher"
+                                                    >🧚‍发布者</label
+                                                >
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    name="publisher"
+                                                    id="publisher"
+                                                    value="请先登录！"
+                                                    readonly
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="seasons"
+                                                    >🌤最佳游玩季节</label
+                                                >
+                                                <select
+                                                    name="seasons"
+                                                    id="seasons"
+                                                >
+                                                    <option value="1"
+                                                        >春季</option
+                                                    >
+                                                    <option value="2"
+                                                        >夏季</option
+                                                    >
+                                                    <option value="3"
+                                                        >秋季</option
+                                                    >
+                                                    <option value="4"
+                                                        >冬季</option
+                                                    >
+                                                    <option value="5"
+                                                        >春秋</option
+                                                    >
+                                                    <option value="6"
+                                                        >四季皆宜</option
+                                                    >
+                                                </select>
+                                            </div>
+
+                                            <div class=" form-group col-md-6">
+                                                <label for="price"
+                                                    >💴票价</label
+                                                >
+                                                <div class="input-group">
+                                                    <div
+                                                        class="input-group-prepend"
+                                                    >
+                                                        <span
+                                                            class="input-group-text"
+                                                            >￥</span
+                                                        >
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        onkeyup="value=value.replace(/^(-1+)|[^\d]+/g,'')"
+                                                        class="form-control"
+                                                        name="ticket"
+                                                        id="ticket"
+                                                        placeholder="票价"
+                                                        required
+                                                    />
+                                                    <div
+                                                        class="input-group-prepend"
+                                                    >
+                                                        <span
+                                                            class="input-group-text"
+                                                            >.00</span
+                                                        >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="position">🚩地址</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                name="position"
+                                                id="position"
+                                                placeholder="景点地址"
+                                                required
+                                            />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="spotDesc"
+                                                >🏝景点描述</label
+                                            >
+                                            <textarea
+                                                name="spotDesc"
+                                                id="spotDesc"
+                                                placeholder="景点描述"
+                                                cols="30"
+                                                rows="10"
+                                                required
+                                            ></textarea>
+                                        </div>
+
+                                        <div class="input-group mb-5">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"
+                                                    >🏕️上传景点图片</span
+                                                >
+                                            </div>
+                                            <div class="custom-file">
+                                                <input
+                                                    type="file"
+                                                    class="custom-file-input"
+                                                    name="album"
+                                                    id="album"
+                                                    required
+                                                />
+                                                <label
+                                                    class="custom-file-label"
+                                                    for="album"
+                                                    >点击选择图片</label
+                                                >
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group mb-5">
+                                            <label for="preview"
+                                                >图片预览👇👇👇</label
+                                            >
+                                            <div id="preview"></div>
+                                        </div>
+                                        <a
+                                            href=""
+                                            class="btn btn-primary"
+                                            onclick="addSpot()"
+                                        >
+                                            发布景点
+                                        </a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- sidebar -->
+            <div id="sidebar">
+                <div class="inner">
+                    <!-- Search Box -->
+                    <section id="search" class="alt">
+                        <form onsubmit="return false" id="keyWordForm">
+                            <input
+                                type="text"
+                                id="keyword"
+                                placeholder="搜索景点..."
+                            />
+                        </form>
+                    </section>
+
+                    <!-- Menu -->
+                    <nav id="menu">
+                        <ul>
+                            <li><a href="index.html">最新景点</a></li>
+                            <li><a href="post-add.html">发布新景点</a></li>
+                            <li><a href="post-manage.html">景点管理</a></li>
+                        </ul>
+                    </nav>
+
+                    <!-- Featured Posts -->
+                    <div class="featured-posts">
+                        <div class="heading">
+                            <h2>免费景点推荐</h2>
+                        </div>
+                        <div id="selected" class="owl-carousel owl-theme"></div>
+                    </div>
+
+                    <!-- Footer -->
+                    <footer id="footer">
+                        <p class="copyright">
+                            UML课设@1600300626王杰城
+                        </p>
+                    </footer>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <!-- Bootstrap core JavaScript -->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/transition.js"></script>
+        <script src="assets/js/owl-carousel.js"></script>
+        <script src="assets/js/custom.js"></script>
+
+        <script src="./assets/js/base.js"></script>
+        <!-- 使用jQuery-form.js插件 -->
+        <script src="./assets/js/jquery-form.js"></script>
+        <script>
+            $(function() {
+                // 游客身份提示
+                if (!landed().isLanded) {
+                    $('#header').after(`
+                    <div
+                        class="alert alert-warning alert-dismissible fade show"
+                        role="alert"
+                        style="margin-bottom: 100px"
+                    >
+                        您现在处于游客状态，如需提交景点请先登录！
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    `)
+
+                    // 提交按钮不可用
+                    $('#addNewSpot')
+                        .attr('disabled', true)
+                        .text('请登录！')
+                } else {
+                    $('#publisher').val(`${landed().landedUser}`)
+                }
+
+                // 获取免费的推荐景点
+                getSelectedSpots()
+
+                // 点击登出
+                $('.logo a').click(function() {
+                    localStorage.clear('myToken')
+                    location.href = 'login.html'
+                })
+            })
+
+            // 表单提交(含文件上传)
+            function addSpot() {
+                console.log('表单提交')
+                $('#newSpotForm').ajaxSubmit({
+                    async: false,
+                    url: rootPath + '/spots/addSpot',
+                    method: 'POST',
+                    success: function(result) {
+                        console.log(result.msg)
+                        alert(result.msg)
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            }
+
+            // 获取免费的推荐景点
+            function getSelectedSpots() {
+                $.ajax({
+                    async: false,
+                    url: rootPath + '/spots/getFreeSpots',
+                    method: 'GET',
+                    success: function(result) {
+                        console.log('获取的免费推荐景点', result)
+                        var selected = ''
+
+                        // 清空原有数据
+                        $('#selected').empty()
+
+                        if (result.data.length == 0) {
+                            console.log(result.msg)
+                            return
+                        }
+                        // 数据对象遍历
+                        $(result.data).each(function(index, obj) {
+                            let album = staticFile + obj.album
+
+                            selected = `
+                            <a href="#">
+                                <div class="featured-item">
+                                    <img
+                                        src="${album}"
+                                        alt="${obj.album}"
+                                    />
+                                    <p>
+                                        ${obj.name}
+                                    </p>
+                                </div>
+                            </a>`
+                            // DOM生成
+                            $('#selected').append(selected)
+                        })
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            }
+
+            // 图片上传预览
+            $('#album').on('change', function() {
+                if (typeof FileReader != 'undefined') {
+                    var preview = $('#preview')
+                    preview.empty()
+                    var reader = new FileReader()
+                    reader.onload = function(e) {
+                        $('<img />', {
+                            src: e.target.result,
+                            class: 'thumb-image'
+                        }).appendTo(preview)
+                    }
+                    preview.show()
+                    reader.readAsDataURL($(this)[0].files[0])
+                } else {
+                    alert('浏览器不支持FileReader，请使用支持的浏览器上传')
+                }
+            })
+
+            // 判断当前是否已登陆
+            function landed() {
+                var my_token = localStorage.myToken
+                var landedStatus = {
+                    isLanded: false,
+                    landedUser: '未登录'
+                }
+                // 页面加载完成时请求
+                $.ajax({
+                    async: false,
+                    url: rootPath + '/users/current',
+                    method: 'GET',
+                    headers: {
+                        Authorization: my_token
+                    },
+                    success: function(result) {
+                        console.log('成功的回调：' + result.msg)
+                        if (result.code == 200) {
+                            // DOM渲染
+                            $('.logo a').text(
+                                result.data.username + '，点击登出'
+                            )
+                            landedStatus.isLanded = true
+                            landedStatus.landedUser = result.data.username
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error.statusText)
+                    }
+                })
+
+                return landedStatus
+            }
+        </script>
+    </body>
+</html>

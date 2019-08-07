@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>旅游图文系统 - 登录</title>
+
+        <!-- Bootstrap core JavaScript -->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- Bootstrap core CSS -->
+        <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <!-- 页面样式 -->
+        <link rel="stylesheet" href="assets/css/login.css" />
+    </head>
+    <body>
+        <!-- 登录窗体 -->
+        <div class="container-fluid">
+            <div class="row no-gutter">
+                <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+                <div class="col-md-8 col-lg-6">
+                    <div class="login d-flex align-items-center py-5">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-9 col-lg-8 mx-auto">
+                                    <h3 class="login-heading mb-4">
+                                        欢迎您，请登录或注册！
+                                    </h3>
+                                    <form id="userInfo">
+                                        <div class="form-label-group">
+                                            <input
+                                                type="text"
+                                                name="username"
+                                                class="form-control"
+                                                placeholder="Email address"
+                                                required
+                                                autofocus
+                                            />
+                                            <label for="inputEmail"
+                                                >用户名</label
+                                            >
+                                        </div>
+
+                                        <div class="form-label-group">
+                                            <input
+                                                type="password"
+                                                name="password"
+                                                class="form-control"
+                                                placeholder="Password"
+                                                required
+                                            />
+                                            <label for="inputPassword"
+                                                >密码</label
+                                            >
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-lg btn-success btn-block btn-login text-uppercase font-weight-bold mb-2"
+                                                    id="registerSubmit"
+                                                    data-toggle="modal"
+                                                    data-target="#loginTips"
+                                                >
+                                                    注册
+                                                </button>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2"
+                                                    id="loginSubmit"
+                                                    data-toggle="modal"
+                                                    data-target="#loginTips"
+                                                >
+                                                    登录
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="text-center">
+                                            <a class="small" href="index.html"
+                                                >返回首页</a
+                                            >
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 注册、登录弹窗 -->
+        <div class="modal fade" id="loginTips" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitle">
+                            系统提示
+                        </h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <span id="tips"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-dismiss="modal"
+                        >
+                            关闭
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script src="assets/js/base.js"></script>
+    <script>
+        $(function() {
+            // 注册事件
+            $('#registerSubmit').click(function() {
+                $.ajax({
+                    method: 'POST',
+                    url: rootPath + '/users/register',
+                    data: $('#userInfo').serialize(),
+                    success: function(result) {
+                        if (result.code == 200) {
+                            // 注册成功
+                            $('#tips').text(result.msg)
+                        } else if (result.code == 202) {
+                            // 用户已存在
+                            $('#tips').text(result.msg)
+                        }
+                        console.log(result)
+                    },
+                    error: function(error) {
+                        $('#tips').text('请求错误！')
+                    }
+                })
+            })
+
+            // 登录事件
+            $('#loginSubmit').click(function() {
+                $.ajax({
+                    async: false,
+                    method: 'POST',
+                    url: rootPath + '/users/login',
+                    data: $('#userInfo').serialize(),
+                    success: function(result) {
+                        console.log(result)
+                        var status = result.code
+                        switch (status) {
+                            case 200:
+                                // 登陆验证成功
+                                $('#tips').text(result.msg)
+
+                                // 将token存入浏览器localStorage(浏览器本地存储)
+                                localStorage.myToken = result.token
+
+                                // 跳转到首页
+                                location.href = 'index.html'
+                                break
+
+                            case 404:
+                                $('#tips').text(result.msg)
+                                break
+
+                            case 400:
+                                $('#tips').text(result.msg)
+                                break
+
+                            default:
+                                console.log('其他情况')
+                                break
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+            })
+        })
+    </script>
+</html>
